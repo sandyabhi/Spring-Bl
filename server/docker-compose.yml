@@ -5,7 +5,7 @@ services:
       - "5432:5432"
     restart: always
     environment:
-      POSTGRES_PASSWORD: pass
+      POSTGRES_PASSWORD: password
 
   adminer:
     image: adminer:latest
