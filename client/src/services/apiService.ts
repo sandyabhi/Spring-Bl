@@ -66,13 +66,15 @@ export enum PostStatus {
   PUBLISHED = 'PUBLISHED'
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 class ApiService {
   private api: AxiosInstance;
   private static instance: ApiService;
 
   private constructor() {
     this.api = axios.create({
-      baseURL: '/api/v1',
+      baseURL: `${API_BASE_URL}/api/v1`,
       headers: {
         'Content-Type': 'application/json'
       }
