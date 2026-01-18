@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -11,25 +11,25 @@ import {
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
-  DropdownItem
-} from '@nextui-org/react';
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import Heading from '@tiptap/extension-heading';
-import BulletList from '@tiptap/extension-bullet-list';
-import OrderedList from '@tiptap/extension-ordered-list';
-import ListItem from '@tiptap/extension-list-item';
-import { 
-  Bold, 
-  Italic, 
-  Undo, 
+  DropdownItem,
+} from "@nextui-org/react";
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Heading from "@tiptap/extension-heading";
+import BulletList from "@tiptap/extension-bullet-list";
+import OrderedList from "@tiptap/extension-ordered-list";
+import ListItem from "@tiptap/extension-list-item";
+import {
+  Bold,
+  Italic,
+  Undo,
   Redo,
   List,
   ListOrdered,
   ChevronDown,
-  X
-} from 'lucide-react';
-import { Post, Category, Tag, PostStatus } from '../services/apiService';
+  X,
+} from "lucide-react";
+import { Post, Category, Tag, PostStatus } from "../services/apiService";
 
 interface PostFormProps {
   initialPost?: Post | null;
@@ -54,11 +54,13 @@ const PostForm: React.FC<PostFormProps> = ({
   availableTags,
   isSubmitting = false,
 }) => {
-  const [title, setTitle] = useState(initialPost?.title || '');
-  const [categoryId, setCategoryId] = useState(initialPost?.category?.id || '');
-  const [selectedTags, setSelectedTags] = useState<Tag[]>(initialPost?.tags || []);
+  const [title, setTitle] = useState(initialPost?.title || "");
+  const [categoryId, setCategoryId] = useState(initialPost?.category?.id || "");
+  const [selectedTags, setSelectedTags] = useState<Tag[]>(
+    initialPost?.tags || [],
+  );
   const [status, setStatus] = useState<PostStatus>(
-    initialPost?.status || PostStatus.DRAFT
+    initialPost?.status || PostStatus.DRAFT,
   );
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -82,10 +84,11 @@ const PostForm: React.FC<PostFormProps> = ({
       }),
       ListItem,
     ],
-    content: initialPost?.content || '',
+    content: initialPost?.content || "",
     editorProps: {
       attributes: {
-        class: 'prose max-w-none focus:outline-none min-h-[400px] px-4 py-2 border rounded-lg',
+        class:
+          "prose max-w-none focus:outline-none min-h-[400px] px-4 py-2 border rounded-lg",
       },
     },
   });
@@ -104,13 +107,13 @@ const PostForm: React.FC<PostFormProps> = ({
     const newErrors: Record<string, string> = {};
 
     if (!title.trim()) {
-      newErrors.title = 'Title is required';
+      newErrors.title = "Title is required";
     }
-    if (!editor?.getHTML() || editor?.getHTML() === '<p></p>') {
-      newErrors.content = 'Content is required';
+    if (!editor?.getHTML() || editor?.getHTML() === "<p></p>") {
+      newErrors.content = "Content is required";
     }
     if (!categoryId) {
-      newErrors.category = 'Category is required';
+      newErrors.category = "Category is required";
     }
 
     setErrors(newErrors);
@@ -126,9 +129,9 @@ const PostForm: React.FC<PostFormProps> = ({
 
     await onSubmit({
       title: title.trim(),
-      content: editor?.getHTML() || '',
+      content: editor?.getHTML() || "",
       categoryId: categoryId,
-      tagIds: selectedTags.map(tag => tag.id),
+      tagIds: selectedTags.map((tag) => tag.id),
       status,
     });
   };
@@ -140,15 +143,20 @@ const PostForm: React.FC<PostFormProps> = ({
   };
 
   const handleTagRemove = (tagToRemove: Tag) => {
-    setSelectedTags(selectedTags.filter(tag => tag !== tagToRemove));
+    setSelectedTags(selectedTags.filter((tag) => tag !== tagToRemove));
   };
 
-  const handleHeadingSelect = (level: number) => {
+  type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
+
+  const isHeadingLevel = (value: number): value is HeadingLevel =>
+    value >= 1 && value <= 6;
+
+  const handleHeadingSelect = (level: HeadingLevel) => {
     editor?.chain().focus().toggleHeading({ level }).run();
   };
 
   const suggestedTags = availableTags
-    .filter(tag => !selectedTags.includes(tag))
+    .filter((tag) => !selectedTags.includes(tag))
     .slice(0, 5);
 
   return (
@@ -179,16 +187,40 @@ const PostForm: React.FC<PostFormProps> = ({
                   </Button>
                 </DropdownTrigger>
                 <DropdownMenu
-                  onAction={(key) => handleHeadingSelect(Number(key))}
+                  onAction={(key) => {
+                    const level = Number(key);
+                    if (isHeadingLevel(level)) handleHeadingSelect(level);
+                  }}
                   aria-label="Heading levels"
                 >
-                  <DropdownItem key="1" className={editor?.isActive('heading', { level: 1 }) ? 'bg-default-200' : ''}>
+                  <DropdownItem
+                    key="1"
+                    className={
+                      editor?.isActive("heading", { level: 1 })
+                        ? "bg-default-200"
+                        : ""
+                    }
+                  >
                     Heading 1
                   </DropdownItem>
-                  <DropdownItem key="2" className={editor?.isActive('heading', { level: 2 }) ? 'bg-default-200' : ''}>
+                  <DropdownItem
+                    key="2"
+                    className={
+                      editor?.isActive("heading", { level: 2 })
+                        ? "bg-default-200"
+                        : ""
+                    }
+                  >
                     Heading 2
                   </DropdownItem>
-                  <DropdownItem key="3" className={editor?.isActive('heading', { level: 3 }) ? 'bg-default-200' : ''}>
+                  <DropdownItem
+                    key="3"
+                    className={
+                      editor?.isActive("heading", { level: 3 })
+                        ? "bg-default-200"
+                        : ""
+                    }
+                  >
                     Heading 3
                   </DropdownItem>
                 </DropdownMenu>
@@ -199,7 +231,7 @@ const PostForm: React.FC<PostFormProps> = ({
                 isIconOnly
                 variant="flat"
                 onClick={() => editor?.chain().focus().toggleBold().run()}
-                className={editor?.isActive('bold') ? 'bg-default-200' : ''}
+                className={editor?.isActive("bold") ? "bg-default-200" : ""}
               >
                 <Bold size={16} />
               </Button>
@@ -208,7 +240,7 @@ const PostForm: React.FC<PostFormProps> = ({
                 isIconOnly
                 variant="flat"
                 onClick={() => editor?.chain().focus().toggleItalic().run()}
-                className={editor?.isActive('italic') ? 'bg-default-200' : ''}
+                className={editor?.isActive("italic") ? "bg-default-200" : ""}
               >
                 <Italic size={16} />
               </Button>
@@ -220,7 +252,9 @@ const PostForm: React.FC<PostFormProps> = ({
                 isIconOnly
                 variant="flat"
                 onClick={() => editor?.chain().focus().toggleBulletList().run()}
-                className={editor?.isActive('bulletList') ? 'bg-default-200' : ''}
+                className={
+                  editor?.isActive("bulletList") ? "bg-default-200" : ""
+                }
               >
                 <List size={16} />
               </Button>
@@ -228,8 +262,12 @@ const PostForm: React.FC<PostFormProps> = ({
                 size="sm"
                 isIconOnly
                 variant="flat"
-                onClick={() => editor?.chain().focus().toggleOrderedList().run()}
-                className={editor?.isActive('orderedList') ? 'bg-default-200' : ''}
+                onClick={() =>
+                  editor?.chain().focus().toggleOrderedList().run()
+                }
+                className={
+                  editor?.isActive("orderedList") ? "bg-default-200" : ""
+                }
               >
                 <ListOrdered size={16} />
               </Button>
@@ -281,7 +319,8 @@ const PostForm: React.FC<PostFormProps> = ({
           <div className="space-y-2">
             <Select
               label="Add Tags"
-              selectedKeys={selectedTags.map(tag => tag.id)}>
+              selectedKeys={selectedTags.map((tag) => tag.id)}
+            >
               <SelectSection>
                 {suggestedTags.map((tag) => (
                   <SelectItem
@@ -317,7 +356,10 @@ const PostForm: React.FC<PostFormProps> = ({
               <SelectItem key={PostStatus.DRAFT} value={PostStatus.DRAFT}>
                 Draft
               </SelectItem>
-              <SelectItem key={PostStatus.PUBLISHED} value={PostStatus.PUBLISHED}>
+              <SelectItem
+                key={PostStatus.PUBLISHED}
+                value={PostStatus.PUBLISHED}
+              >
                 Published
               </SelectItem>
             </Select>
@@ -332,12 +374,8 @@ const PostForm: React.FC<PostFormProps> = ({
             >
               Cancel
             </Button>
-            <Button
-              color="primary"
-              type="submit"
-              isLoading={isSubmitting}
-            >
-              {initialPost ? 'Update' : 'Create'} Post
+            <Button color="primary" type="submit" isLoading={isSubmitting}>
+              {initialPost ? "Update" : "Create"} Post
             </Button>
           </div>
         </CardBody>
